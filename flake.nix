@@ -31,12 +31,16 @@
 
         cherry-bomb = with final; stdenv.mkDerivation rec {
 
-          buildInputs = builtins.attrValues { inherit (nixpkgsFor.${system}) coreutils hub; };
-          buildPhase = ":";
-          installPhase = ./install.sh;
+          buildInputs = [ final.makeWrapper ];
+          phases = [ "installPhase" ];
+          installPhase =
+            ''
+              mkdir -p $out/bin
+              cp ${./cherry-bomb.sh} $out/bin/cherry-bomb
+              wrapProgram $out/bin/cherry-bomb \
+                --set PATH "${final.lib.makeBinPath [ final.hub ]}"
+            '';
           name = "cherry-bomb-${version}";
-          src = ./cherry-bomb.sh;
-          unpackPhase = ":";
         };
 
       };

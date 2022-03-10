@@ -3,10 +3,6 @@
 set -e
 
 unset PATH
-for e in $buildInputs; do
-  echo $e
-  export PATH=$e/bin${PATH:+:}$PATH
-done
 
 while getopts 'p:c:' OPTION; do
     case "$OPTION" in

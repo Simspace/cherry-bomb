@@ -2,13 +2,8 @@
 
 set -e
 
-unset PATH
-
-while getopts 'p:c:' OPTION; do
+while getopts 'c:' OPTION; do
     case "$OPTION" in
-        p)
-            p="$OPTARG"
-            ;;
         c)
             c="$OPTARG"
             ;;
@@ -19,9 +14,17 @@ done
 
 if [ -n "${p}" ] &&  [ -n "${c}" ]
 then
-  cd "${p}" || exit
-  pwd
-  $hub pr list -s open -f "%B%H%n"
+  dir=$(mktemp -d)
+  git clone git@github.com:Simspace/portal-suite.git "${dir}"
+  git reset --hard origin/dev
+  cd "${dir}" || exit
+  for branch_name in $(hub pr list -s open -f "%H "); do
+    git checkout "${branch_name}"
+    git cherry-pick "${c}"
+    git push
+    git checkout dev
+    git reset --hard origin/dev
+  done
 else
-  echo "Usage: cherry-bomb [-p path] [-c commit-hash]" >&2
+  echo "Usage: cherry-bomb [-c commit-hash]" >&2
 fi

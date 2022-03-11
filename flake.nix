@@ -38,7 +38,7 @@
               mkdir -p $out/bin
               cp ${./cherry-bomb.sh} $out/bin/cherry-bomb
               wrapProgram $out/bin/cherry-bomb \
-                --set PATH "${final.lib.makeBinPath [ final.hub ]}"
+                --set PATH "${final.lib.makeBinPath [ final.hub final.git final.mktemp ]}"
             '';
           name = "cherry-bomb-${version}";
         };

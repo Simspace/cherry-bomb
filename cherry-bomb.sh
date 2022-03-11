@@ -2,8 +2,11 @@
 
 set -e
 
-while getopts 'c:' OPTION; do
+while getopts 'r:c:' OPTION; do
     case "$OPTION" in
+        r)
+            r="$OPTARG"
+            ;;
         c)
             c="$OPTARG"
             ;;
@@ -12,10 +15,10 @@ while getopts 'c:' OPTION; do
     esac
 done
 
-if [ -n "${p}" ] &&  [ -n "${c}" ]
+if [ -n "${r}" ] &&  [ -n "${c}" ]
 then
   dir=$(mktemp -d)
-  git clone git@github.com:Simspace/portal-suite.git "${dir}"
+  git clone "${r}" "${dir}"
   git reset --hard origin/dev
   cd "${dir}" || exit
   for branch_name in $(hub pr list -s open -f "%H "); do
